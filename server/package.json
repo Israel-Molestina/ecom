@@ -18,5 +18,8 @@
     "mongoose": "^6.1.6",
     "bcrypt": "^5.0.0",
     "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }

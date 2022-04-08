@@ -2,6 +2,7 @@ const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 const dateFormat = require("../utils/dateFormat");
 
+//creates user schema
 const userSchema = new Schema({
   nameFirst: {
     type: String,
@@ -32,6 +33,7 @@ const userSchema = new Schema({
     required: true,
     minlength: 5,
   },
+  orders: [Order.schema],
 
   createdAt: {
     type: Date,

@@ -1,31 +1,35 @@
 const { AuthenticationError } = require("apollo-server-express");
 const { User, Product, Category, Order } = require("../models");
 const { signToken } = require("../utils/auth");
-const stripe = require("stripe")("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
 
 const resolvers = {
   Query: {
+    // getas all categories
     categories: async () => {
       return await Category.find();
     },
-    products: async (parent, { category, name }) => {
+
+    // can get either all products or a product witha specific catgoery or title and populates with category
+    products: async (parent, { category, title }) => {
       const params = {};
 
       if (category) {
         params.category = category;
       }
 
-      if (name) {
-        params.name = {
-          $regex: name,
+      if (title) {
+        params.title = {
+          $regex: title,
         };
       }
 
       return await Product.find(params).populate("category");
     },
+    // gets single product based on id and populates with category
     product: async (parent, { _id }) => {
       return await Product.findById(_id).populate("category");
     },
+    // gets user based on userid
     user: async (parent, args, context) => {
       if (context.user) {
         const user = await User.findById(context.user._id).populate({
@@ -40,6 +44,7 @@ const resolvers = {
 
       throw new AuthenticationError("Not logged in");
     },
+    // gets order based on id
     order: async (parent, { _id }, context) => {
       if (context.user) {
         const user = await User.findById(context.user._id).populate({
@@ -52,64 +57,16 @@ const resolvers = {
 
       throw new AuthenticationError("Not logged in");
     },
-    // checkout: async (parent, args, context) => {
-    //   const url = new URL(context.headers.referer).origin;
-    //   const order = new Order({ products: args.products });
-    //   const line_items = [];
-
-    //   const { products } = await order.populate('products');
-
-    //   for (let i = 0; i < products.length; i++) {
-    //     const product = await stripe.products.create({
-    //       name: products[i].name,
-    //       description: products[i].description,
-    //       images: [`${url}/images/${products[i].image}`]
-    //     });
-
-    //     const price = await stripe.prices.create({
-    //       product: product.id,
-    //       unit_amount: products[i].price * 100,
-    //       currency: 'usd',
-    //     });
-
-    //     line_items.push({
-    //       price: price.id,
-    //       quantity: 1
-    //     });
-    //   }
-
-    //   const session = await stripe.checkout.sessions.create({
-    //     payment_method_types: ['card'],
-    //     line_items,
-    //     mode: 'payment',
-    //     success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
-    //     cancel_url: `${url}/`
-    //   });
-
-    //   return { session: session.id };
-    // }
   },
   Mutation: {
+    // adds a new user with authentication
     addUser: async (parent, args) => {
       const user = await User.create(args);
       const token = signToken(user);
 
       return { token, user };
     },
-    // addOrder: async (parent, { products }, context) => {
-    //   console.log(context);
-    //   if (context.user) {
-    //     const order = new Order({ products });
-
-    //     await User.findByIdAndUpdate(context.user._id, {
-    //       $push: { orders: order },
-    //     });
-
-    //     return order;
-    //   }
-
-    //   throw new AuthenticationError("Not logged in");
-    // },
+    // updates user
     updateUser: async (parent, args, context) => {
       if (context.user) {
         return await User.findByIdAndUpdate(context.user._id, args, {
@@ -119,6 +76,7 @@ const resolvers = {
 
       throw new AuthenticationError("Not logged in");
     },
+    // updates product
     updateProduct: async (parent, { _id, quantity }) => {
       const decrement = Math.abs(quantity) * -1;
 
@@ -128,6 +86,7 @@ const resolvers = {
         { new: true }
       );
     },
+    // logs user in
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
 

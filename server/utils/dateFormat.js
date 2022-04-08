@@ -4,6 +4,7 @@ const addDateSuffix = (date) => {
   // get last char of date string
   const lastChar = dateStr.charAt(dateStr.length - 1);
 
+  // determins suffix of number
   if (lastChar === "1" && dateStr !== "11") {
     dateStr = `${dateStr}st`;
   } else if (lastChar === "2" && dateStr !== "12") {

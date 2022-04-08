@@ -1,6 +1,7 @@
 const { Schema, model } = require("mongoose");
 const dateFormat = require("../utils/dateFormat");
 
+// creates order modeld
 const orderSchema = new Schema({
   purchaseDate: {
     type: Date,
