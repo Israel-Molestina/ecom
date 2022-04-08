@@ -1,20 +1,21 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 const dateFormat = require("../utils/dateFormat");
+const Order = require("./Order");
 
 //creates user schema
 const userSchema = new Schema({
-  nameFirst: {
+  firstName: {
     type: String,
     required: true,
     unique: false,
   },
-  nameLast: {
+  lastName: {
     type: String,
     required: false,
     unique: false,
   },
-  nameFull: {
+  fullName: {
     type: String,
     required: false,
     unique: false,
