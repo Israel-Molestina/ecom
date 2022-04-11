@@ -1,5 +1,5 @@
 # shoplocal
 
-cd into server and npm i
+first npm i from root directory
 
-npm start to run server
+then npm run develop from root directory to start both server and client servers
