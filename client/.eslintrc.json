@@ -1,3 +1,15 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true
+  },
+  "extends": "next/core-web-vitals",
+  "plugins": ["@emotions"],
+  "rules": {
+    "@emotion/jsx-import": "error",
+    "@emotion/no-vanilla": "error",
+    "@emotion/import-from-emotion": "error",
+    "@emotion/style-import": "error"
+  }
 }
